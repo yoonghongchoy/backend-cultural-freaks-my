@@ -10,6 +10,7 @@ import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { User } from '../user/schemas/user.schema';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +19,7 @@ export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    private mailService: MailService,
   ) {}
 
   async signUp(createUserDto: CreateUserDto): Promise<void> {
@@ -28,10 +30,13 @@ export class AuthService {
     }
 
     const hashPassword = await bcrypt.hash(createUserDto.password, 10);
-    await this.userService.create({
+    const newUser = await this.userService.create({
       ...createUserDto,
       password: hashPassword,
     });
+
+    const token = Math.floor(1000 + Math.random() * 9000).toString();
+    await this.mailService.sendUserActivation(newUser, token);
   }
 
   async login(loginDto: LoginDto): Promise<{ accessToken: string }> {
