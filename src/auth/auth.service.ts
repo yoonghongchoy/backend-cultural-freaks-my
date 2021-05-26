@@ -9,7 +9,6 @@ import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../user/dto/create-user.dto';
-import { User } from '../user/schemas/user.schema';
 import { MailService } from '../mail/mail.service';
 
 @Injectable()

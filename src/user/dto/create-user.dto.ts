@@ -19,7 +19,7 @@ export class CreateUserDto {
   firstName: string;
 
   @IsString()
-  surName: string;
+  surname: string;
 
   @IsString()
   dob: string;

@@ -1,4 +1,10 @@
-import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
@@ -15,6 +21,7 @@ export class AuthController {
   }
 
   @Post('/login')
+  @HttpCode(200)
   login(
     @Body(ValidationPipe) loginDto: LoginDto,
   ): Promise<{ accessToken: string }> {
