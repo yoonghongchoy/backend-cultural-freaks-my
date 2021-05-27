@@ -21,7 +21,7 @@ export class User {
   firstName: string;
 
   @Prop({ required: true })
-  surName: string;
+  surname: string;
 
   @Prop({ required: true })
   dob: string;
