@@ -1,16 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type UserDocument = User & Document;
-
 export enum Gender {
   male = 'Male',
   female = 'Female',
   custom = 'Custom',
 }
 
-@Schema()
-export class User {
+@Schema({ timestamps: true })
+export class User extends Document {
   @Prop({ required: true, unique: true })
   email: string;
 

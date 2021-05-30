@@ -1,11 +1,4 @@
-import {
-  IsDate,
-  IsDateString,
-  IsEmail,
-  IsIn,
-  IsISO8601,
-  IsString,
-} from 'class-validator';
+import { IsEmail, IsIn, IsString } from 'class-validator';
 import { Gender } from '../schemas/user.schema';
 
 export class CreateUserDto {
