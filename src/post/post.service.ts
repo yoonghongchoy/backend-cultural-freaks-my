@@ -24,7 +24,7 @@ export class PostService {
     const { limit, offset } = paginationQuery;
     return this.postModel
       .find()
-      .populate('user', 'firstName surname')
+      .populate('user', 'firstName surname profilePicture')
       .skip(offset)
       .limit(limit)
       .exec();
@@ -33,7 +33,7 @@ export class PostService {
   async findOne(id: string) {
     const post = await this.postModel
       .findOne({ _id: id })
-      .populate('user', 'firstName surname')
+      .populate('user', 'firstName surname profilePicture')
       .exec();
     if (!post) {
       throw new NotFoundException(`Post #${id} not found`);

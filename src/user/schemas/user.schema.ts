@@ -26,6 +26,15 @@ export class User extends Document {
 
   @Prop({ required: true })
   gender: Gender;
+
+  @Prop({ default: null })
+  profilePicture: string;
+
+  @Prop()
+  token: string;
+
+  @Prop({ default: false })
+  isActivated: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

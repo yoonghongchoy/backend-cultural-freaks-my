@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
@@ -10,12 +10,25 @@ export class UserService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto, token: string) {
     const user = new this.userModel(createUserDto);
+    user.token = token;
     return user.save();
   }
 
   async findOne(email: string): Promise<User> {
     return this.userModel.findOne({ email }).exec();
+  }
+
+  async updateIsActivated(token: string) {
+    const existingUser = await this.userModel.findOneAndUpdate(
+      { token },
+      { isActivated: true },
+    );
+
+    if (!existingUser) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    return existingUser;
   }
 }

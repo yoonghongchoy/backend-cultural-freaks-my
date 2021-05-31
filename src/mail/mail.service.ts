@@ -13,9 +13,9 @@ export class MailService {
   ) {}
 
   async sendUserActivation(user: User, token: string): Promise<void> {
-    const url = `http://${this.configService.get<string>(
-      'host',
-    )}:${this.configService.get<string>('port')}/auth/confirm?token=${token}`;
+    const url = `${this.configService.get<string>(
+      'frontend_url',
+    )}/activation?token=${token}`;
 
     this.logger.debug(`Sending email to ${user.email}`);
     await this.mailerService.sendMail({

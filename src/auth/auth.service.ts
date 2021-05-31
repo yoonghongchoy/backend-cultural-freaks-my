@@ -10,6 +10,7 @@ import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { MailService } from '../mail/mail.service';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -29,18 +30,24 @@ export class AuthService {
     }
 
     const hashPassword = await bcrypt.hash(createUserDto.password, 10);
-    const newUser = await this.userService.create({
-      ...createUserDto,
-      password: hashPassword,
-    });
+    const token = crypto.randomBytes(64).toString('hex');
 
-    const token = Math.floor(1000 + Math.random() * 9000).toString();
+    const newUser = await this.userService.create(
+      {
+        ...createUserDto,
+        password: hashPassword,
+      },
+      token,
+    );
     await this.mailService.sendUserActivation(newUser, token);
   }
 
   async login(loginDto: LoginDto): Promise<{ accessToken: string }> {
     const user = await this.userService.findOne(loginDto.email);
 
+    // if (!user || !user.isActivated) {
+    //   throw new UnauthorizedException('Invalid credentials');
+    // }
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -52,6 +59,22 @@ export class AuthService {
     }
 
     const payload = { email: user.email };
+    const accessToken = await this.jwtService.sign(payload);
+    this.logger.debug(
+      `Generated JWT Token with payload ${JSON.stringify(payload)}`,
+    );
+
+    return { accessToken };
+  }
+
+  async activate(token: string) {
+    const existingUser = await this.userService.updateIsActivated(token);
+
+    if (!existingUser) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const payload = { email: existingUser.email };
     const accessToken = await this.jwtService.sign(payload);
     this.logger.debug(
       `Generated JWT Token with payload ${JSON.stringify(payload)}`,

@@ -1,6 +1,7 @@
 export default () => ({
   host: process.env.HOST,
   port: parseInt(process.env.PORT, 10) || 3000,
+  frontend_url: process.env.FRONTEND_URL,
   mongodb_uri: process.env.MONGODB_URI,
   jwt_secret: process.env.SECRET_KEY,
   mail: {
