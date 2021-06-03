@@ -1,4 +1,12 @@
-import { Body, Controller, Get, HttpCode, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
@@ -22,7 +30,7 @@ export class AuthController {
 
   @Get('/activate')
   @HttpCode(200)
-  activate(@Param('token') token: string) {
+  activate(@Query('token') token: string) {
     return this.authService.activate(token);
   }
 }

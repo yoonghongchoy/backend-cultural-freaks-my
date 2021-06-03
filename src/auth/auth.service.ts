@@ -45,11 +45,12 @@ export class AuthService {
   async login(loginDto: LoginDto): Promise<{ accessToken: string }> {
     const user = await this.userService.findOne(loginDto.email);
 
-    // if (!user || !user.isActivated) {
-    //   throw new UnauthorizedException('Invalid credentials');
-    // }
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (!user.isActivated) {
+      throw new UnauthorizedException('Please activate your account');
     }
 
     const compare = await bcrypt.compare(loginDto.password, user.password);

@@ -23,7 +23,7 @@ export class UserService {
   async updateIsActivated(token: string) {
     const existingUser = await this.userModel.findOneAndUpdate(
       { token },
-      { isActivated: true },
+      { isActivated: true, token: null },
     );
 
     if (!existingUser) {
