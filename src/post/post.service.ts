@@ -22,11 +22,13 @@ export class PostService {
 
   findAll(paginationQuery: PaginationQueryDto) {
     const { limit, offset } = paginationQuery;
+
     return this.postModel
       .find()
       .populate('user', 'firstName surname profilePicture')
       .skip(offset)
       .limit(limit)
+      .sort({ createdAt: -1 })
       .exec();
   }
 

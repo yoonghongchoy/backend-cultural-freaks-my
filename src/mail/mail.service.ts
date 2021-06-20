@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import { User } from '../user/schemas/user.schema';
 import { ConfigService } from '@nestjs/config';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 
 @Injectable()
 export class MailService {
@@ -12,7 +12,7 @@ export class MailService {
     private mailerService: MailerService,
   ) {}
 
-  async sendUserActivation(user: User, token: string): Promise<void> {
+  async sendUserActivation(user: CreateUserDto, token: string): Promise<void> {
     const url = `${this.configService.get<string>(
       'frontend_url',
     )}/activation?token=${token}`;

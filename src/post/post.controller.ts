@@ -20,8 +20,8 @@ import { User } from '../user/schemas/user.schema';
 
 @ApiTags('post')
 @ApiBearerAuth()
-@Controller('post')
 @UseGuards(AuthGuard())
+@Controller('post')
 export class PostController {
   constructor(private postService: PostService) {}
 

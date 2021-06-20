@@ -32,14 +32,13 @@ export class AuthService {
     const hashPassword = await bcrypt.hash(createUserDto.password, 10);
     const token = crypto.randomBytes(64).toString('hex');
 
-    const newUser = await this.userService.create(
-      {
-        ...createUserDto,
-        password: hashPassword,
-      },
-      token,
-    );
+    const newUser = {
+      ...createUserDto,
+      password: hashPassword,
+    };
+
     await this.mailService.sendUserActivation(newUser, token);
+    await this.userService.create(newUser, token);
   }
 
   async login(loginDto: LoginDto): Promise<{ accessToken: string }> {
