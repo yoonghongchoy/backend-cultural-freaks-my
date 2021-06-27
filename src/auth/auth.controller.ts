@@ -6,11 +6,15 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { GetUser } from './get-user.decorator';
+import { User } from '../user/schemas/user.schema';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -32,5 +36,17 @@ export class AuthController {
   @HttpCode(200)
   activate(@Query('token') token: string) {
     return this.authService.activate(token);
+  }
+
+  @UseGuards(AuthGuard())
+  @Get('/user')
+  findOneByToken(@GetUser() user: User) {
+    return this.authService.findUser(user._id);
+  }
+
+  @UseGuards(AuthGuard())
+  @Get('/user/:id')
+  findOneById(@Param('id') id: string) {
+    return this.authService.findUser(id);
   }
 }

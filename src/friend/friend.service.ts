@@ -4,7 +4,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Friend } from './schemas/friend.schemas';
 import { Model } from 'mongoose';
 import { User } from '../user/schemas/user.schema';
-import { PaginationQueryDto } from './dto/pagination-query.dto';
+import { GetFriendDto } from './dto/get-friend.dto';
+import { UpdateFriendDto } from './dto/update-friend.dto';
 
 @Injectable()
 export class FriendService {
@@ -24,15 +25,24 @@ export class FriendService {
     return newFriend.save();
   }
 
-  findAllById(paginationQuery: PaginationQueryDto, user: User) {
-    const { limit, offset } = paginationQuery;
-    const { _id: id } = user;
+  findAllByIdAndStatus(paginationQuery: GetFriendDto) {
+    const { limit, offset, userId, status } = paginationQuery;
 
     return this.friendModal
-      .find({ $or: [{ user1: id }, { user2: id }] })
+      .find({ $or: [{ user1: userId }, { user2: userId }] })
       .populate('user1 user2', 'firstName surname profilePicture')
       .skip(offset)
       .limit(limit)
       .exec();
+  }
+
+  updateFriendRequest(updateFriendDto: UpdateFriendDto) {
+    const { id, status } = updateFriendDto;
+    return this.friendModal.updateOne({ _id: id }, { status });
+  }
+
+  async remove(id: string) {
+    const friend = await this.friendModal.findOne({ _id: id }).exec();
+    return friend.remove();
   }
 }

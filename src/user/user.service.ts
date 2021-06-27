@@ -20,6 +20,10 @@ export class UserService {
     return this.userModel.findOne({ email }).exec();
   }
 
+  findOneById(id: string) {
+    return this.userModel.findOne({ _id: id }).exec();
+  }
+
   async updateIsActivated(token: string) {
     const existingUser = await this.userModel.findOneAndUpdate(
       { token },

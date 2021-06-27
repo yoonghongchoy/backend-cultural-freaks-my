@@ -13,7 +13,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { PaginationQueryDto } from './dto/pagination-query.dto';
+import { GetPostDto } from './dto/get-post.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../user/schemas/user.schema';
@@ -26,8 +26,8 @@ export class PostController {
   constructor(private postService: PostService) {}
 
   @Get()
-  findAll(@Query() paginationQuery: PaginationQueryDto) {
-    return this.postService.findAll(paginationQuery);
+  findAll(@Query() getPostDto: GetPostDto) {
+    return this.postService.findAll(getPostDto);
   }
 
   @Get(':id')

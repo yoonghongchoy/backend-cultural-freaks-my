@@ -1,7 +1,7 @@
 import { IsOptional, IsPositive, IsString } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-export class PaginationQueryDto {
+export class GetPostDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsPositive()
@@ -11,4 +11,9 @@ export class PaginationQueryDto {
   @IsOptional()
   @IsPositive()
   offset: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  userId: string;
 }

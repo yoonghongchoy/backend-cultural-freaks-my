@@ -9,7 +9,7 @@ import { Post } from './schemas/post.schema';
 import { Model } from 'mongoose';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { PaginationQueryDto } from './dto/pagination-query.dto';
+import { GetPostDto } from './dto/get-post.dto';
 import { User } from '../user/schemas/user.schema';
 
 @Injectable()
@@ -20,8 +20,18 @@ export class PostService {
     @InjectModel(Post.name) private readonly postModel: Model<Post>,
   ) {}
 
-  findAll(paginationQuery: PaginationQueryDto) {
-    const { limit, offset } = paginationQuery;
+  findAll(getPostDto: GetPostDto) {
+    const { limit, offset, userId } = getPostDto;
+
+    if (userId) {
+      return this.postModel
+        .find({ user: userId })
+        .populate('user', 'firstName surname profilePicture')
+        .skip(offset)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .exec();
+    }
 
     return this.postModel
       .find()
@@ -44,14 +54,13 @@ export class PostService {
   }
 
   async create(createPostDto: CreatePostDto, user: User) {
-    const { content, hashtags, images, videos } = createPostDto;
+    const { content, hashtags, medias } = createPostDto;
 
     let post = new this.postModel();
-    post.user = user;
+    post.user = user._id;
     post.content = content;
     post.hashtags = hashtags;
-    post.images = images;
-    post.videos = videos;
+    post.medias = medias;
 
     try {
       await post.save();
@@ -66,7 +75,7 @@ export class PostService {
     }
 
     post = <Post>post.toObject();
-    delete post.user.password;
+    delete post.user;
 
     return post;
   }

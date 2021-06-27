@@ -10,6 +10,9 @@ export class Friend extends Document {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
   user2: string;
+
+  @Prop({ default: 'pending' })
+  status: string;
 }
 
 export const FriendSchema = SchemaFactory.createForClass(Friend);

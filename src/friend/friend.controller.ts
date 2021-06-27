@@ -1,11 +1,22 @@
-import { Controller, Get, Post, Body, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  UseGuards,
+  Query,
+  Patch,
+  Delete,
+  Param,
+} from '@nestjs/common';
 import { FriendService } from './friend.service';
 import { CreateFriendDto } from './dto/create-friend.dto';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../user/schemas/user.schema';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { PaginationQueryDto } from '../post/dto/pagination-query.dto';
+import { UpdateFriendDto } from './dto/update-friend.dto';
+import { GetFriendDto } from './dto/get-friend.dto';
 
 @ApiTags('friend')
 @ApiBearerAuth()
@@ -20,7 +31,17 @@ export class FriendController {
   }
 
   @Get()
-  findAll(@Query() paginationQuery: PaginationQueryDto, @GetUser() user: User) {
-    return this.friendService.findAllById(paginationQuery, user);
+  findByUserIdAndStatus(@Query() getFriendDto: GetFriendDto) {
+    return this.friendService.findAllByIdAndStatus(getFriendDto);
+  }
+
+  @Patch('updateFriendRequest')
+  updateFriendRequest(@Body() updateFriendDto: UpdateFriendDto) {
+    return this.friendService.updateFriendRequest(updateFriendDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.friendService.remove(id);
   }
 }

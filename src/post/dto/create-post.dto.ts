@@ -1,6 +1,15 @@
-import { IsObject, IsOptional, IsString } from 'class-validator';
-import { User } from '../../user/schemas/user.schema';
+import {
+  IsArray,
+  IsJSON,
+  IsObject,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Media } from '../schemas/post.schema';
+import { Type } from 'class-transformer';
+import { MediaDto } from './media.dto';
 
 export class CreatePostDto {
   @IsString()
@@ -13,11 +22,8 @@ export class CreatePostDto {
 
   @ApiPropertyOptional()
   @IsOptional()
-  @IsString({ each: true })
-  images: string[];
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString({ each: true })
-  videos: string[];
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => MediaDto)
+  medias: MediaDto[];
 }

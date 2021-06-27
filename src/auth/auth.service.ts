@@ -82,4 +82,8 @@ export class AuthService {
 
     return { accessToken };
   }
+
+  findUser(id: string) {
+    return this.userService.findOneById(id);
+  }
 }

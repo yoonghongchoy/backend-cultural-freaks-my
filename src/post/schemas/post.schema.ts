@@ -3,10 +3,16 @@ import { Document } from 'mongoose';
 import { User } from '../../user/schemas/user.schema';
 import * as mongoose from 'mongoose';
 
+export interface Media {
+  name: string;
+  value: string;
+  type: string;
+}
+
 @Schema({ timestamps: true })
 export class Post extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
-  user: User;
+  user: string;
 
   @Prop({ required: true })
   content: string;
@@ -14,11 +20,8 @@ export class Post extends Document {
   @Prop([String])
   hashtags: string[];
 
-  @Prop([String])
-  images: string[];
-
-  @Prop([String])
-  videos: string[];
+  @Prop([Object])
+  medias: Media[];
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);
