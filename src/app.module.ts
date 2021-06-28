@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { PostModule } from './post/post.module';
 import { FriendModule } from './friend/friend.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { FriendModule } from './friend/friend.module';
     MailModule,
     PostModule,
     FriendModule,
+    SearchModule,
   ],
   controllers: [],
   providers: [],

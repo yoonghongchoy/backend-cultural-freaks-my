@@ -35,6 +35,11 @@ export class FriendController {
     return this.friendService.findAllByIdAndStatus(getFriendDto);
   }
 
+  @Get('isFriend/:userId')
+  checkIsFriend(@Param('userId') userId: string, @GetUser() user: User) {
+    return this.friendService.checkIsFriend(userId, user);
+  }
+
   @Patch('updateFriendRequest')
   updateFriendRequest(@Body() updateFriendDto: UpdateFriendDto) {
     return this.friendService.updateFriendRequest(updateFriendDto);

@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
+import { SearchQueryDto } from '../search/dto/search-query.dto';
 
 @Injectable()
 export class UserService {
@@ -14,6 +15,27 @@ export class UserService {
     const user = new this.userModel(createUserDto);
     user.token = token;
     return user.save();
+  }
+
+  search(searchQueryDto: SearchQueryDto, userId: string) {
+    const { limit, offset, search } = searchQueryDto;
+
+    return this.userModel
+      .find(
+        {
+          $or: [
+            { firstName: { $regex: search, $options: 'i' } },
+            { surname: { $regex: search, $options: 'i' } },
+          ],
+          isActivated: true,
+          _id: { $ne: userId },
+        },
+        '_id profilePicture firstName surname',
+      )
+      .skip(offset)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .exec();
   }
 
   async findOne(email: string) {

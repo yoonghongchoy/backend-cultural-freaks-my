@@ -11,6 +11,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { GetPostDto } from './dto/get-post.dto';
 import { User } from '../user/schemas/user.schema';
+import { SearchQueryDto } from '../search/dto/search-query.dto';
 
 @Injectable()
 export class PostService {
@@ -19,6 +20,17 @@ export class PostService {
   constructor(
     @InjectModel(Post.name) private readonly postModel: Model<Post>,
   ) {}
+
+  search(searchQueryDto: SearchQueryDto) {
+    const { limit, offset, search } = searchQueryDto;
+
+    return this.postModel
+      .find({ content: { $regex: search, $options: 'i' } }, '_id content')
+      .skip(offset)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .exec();
+  }
 
   findAll(getPostDto: GetPostDto) {
     const { limit, offset, userId } = getPostDto;

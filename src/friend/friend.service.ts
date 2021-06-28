@@ -36,6 +36,21 @@ export class FriendService {
       .exec();
   }
 
+  checkIsFriend(userId: string, user: User) {
+    const id = user._id;
+    return this.friendModal
+      .findOne(
+        {
+          $or: [
+            { $and: [{ user1: id }, { user2: userId }] },
+            { $and: [{ user1: userId }, { user2: id }] },
+          ],
+        },
+        'status',
+      )
+      .exec();
+  }
+
   updateFriendRequest(updateFriendDto: UpdateFriendDto) {
     const { id, status } = updateFriendDto;
     return this.friendModal.updateOne({ _id: id }, { status });
