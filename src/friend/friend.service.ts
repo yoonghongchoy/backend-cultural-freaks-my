@@ -29,7 +29,7 @@ export class FriendService {
     const { limit, offset, userId, status } = paginationQuery;
 
     return this.friendModal
-      .find({ $or: [{ user1: userId }, { user2: userId }] })
+      .find({ $or: [{ user1: userId }, { user2: userId }], status: status })
       .populate('user1 user2', 'firstName surname profilePicture')
       .skip(offset)
       .limit(limit)
