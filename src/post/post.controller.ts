@@ -26,8 +26,8 @@ export class PostController {
   constructor(private postService: PostService) {}
 
   @Get()
-  findAll(@Query() getPostDto: GetPostDto) {
-    return this.postService.findAll(getPostDto);
+  findAll(@Query() getPostDto: GetPostDto, @GetUser() user: User) {
+    return this.postService.findAll(getPostDto, user._id);
   }
 
   @Get(':id')

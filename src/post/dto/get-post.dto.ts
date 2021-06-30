@@ -15,5 +15,30 @@ export class GetPostDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  sortBy: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
   userId: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  state: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  keyword1: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  keyword2: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  keyword3: string;
 }

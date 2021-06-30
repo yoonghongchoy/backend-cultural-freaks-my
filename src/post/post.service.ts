@@ -6,12 +6,13 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post } from './schemas/post.schema';
-import { Model } from 'mongoose';
+import { Model, Schema } from 'mongoose';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { GetPostDto } from './dto/get-post.dto';
 import { User } from '../user/schemas/user.schema';
 import { SearchQueryDto } from '../search/dto/search-query.dto';
+import * as mongoose from 'mongoose';
 
 @Injectable()
 export class PostService {
@@ -32,23 +33,44 @@ export class PostService {
       .exec();
   }
 
-  findAll(getPostDto: GetPostDto) {
-    const { limit, offset, userId } = getPostDto;
-
+  findAll(getPostDto: GetPostDto, myId: string) {
+    const {
+      limit,
+      offset,
+      sortBy,
+      userId,
+      state,
+      keyword1,
+      keyword2,
+      keyword3,
+    } = getPostDto;
+    this.logger.debug(JSON.stringify(getPostDto));
     const filter = {};
+    const sort = { createdAt: -1 };
 
     if (userId) {
       filter['user'] = userId;
     }
 
+    if (sortBy === 'isLiked') {
+      filter['likes'] = myId;
+    } else if (sortBy === 'popular') {
+      sort['likes'] = -1;
+    }
+
+    if (state) {
+      filter['hashtags'] = `#${state.replace(/\s+/g, '')}`;
+    }
+
     this.logger.debug(`Filter: ${JSON.stringify(filter)}`);
+    this.logger.debug(`Sort: ${JSON.stringify(sort)}`);
 
     return this.postModel
       .find(filter)
       .populate('user', 'firstName surname profilePicture')
       .skip(offset)
       .limit(limit)
-      .sort({ createdAt: -1 })
+      .sort(sort)
       .exec();
   }
 
