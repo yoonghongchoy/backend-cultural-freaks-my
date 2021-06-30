@@ -8,6 +8,7 @@ import { MailModule } from './mail/mail.module';
 import { PostModule } from './post/post.module';
 import { FriendModule } from './friend/friend.module';
 import { SearchModule } from './search/search.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { SearchModule } from './search/search.module';
     PostModule,
     FriendModule,
     SearchModule,
+    NotificationModule,
   ],
   controllers: [],
   providers: [],

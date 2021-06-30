@@ -22,6 +22,12 @@ export class Post extends Document {
 
   @Prop([Object])
   medias: Media[];
+
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: User.name }],
+    default: [],
+  })
+  likes: string[];
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

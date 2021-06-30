@@ -35,18 +35,16 @@ export class PostService {
   findAll(getPostDto: GetPostDto) {
     const { limit, offset, userId } = getPostDto;
 
+    const filter = {};
+
     if (userId) {
-      return this.postModel
-        .find({ user: userId })
-        .populate('user', 'firstName surname profilePicture')
-        .skip(offset)
-        .limit(limit)
-        .sort({ createdAt: -1 })
-        .exec();
+      filter['user'] = userId;
     }
 
+    this.logger.debug(`Filter: ${JSON.stringify(filter)}`);
+
     return this.postModel
-      .find()
+      .find(filter)
       .populate('user', 'firstName surname profilePicture')
       .skip(offset)
       .limit(limit)
@@ -78,7 +76,7 @@ export class PostService {
       await post.save();
     } catch (err) {
       this.logger.error(
-        `Failed to create a task for user "${
+        `Failed to create a post for user "${
           user.email
         }". Data: ${JSON.stringify(createPostDto)}`,
         err.stack,
@@ -106,5 +104,19 @@ export class PostService {
   async remove(id: string) {
     const post = await this.findOne(id);
     return post.remove();
+  }
+
+  like(postId: string, userId: string) {
+    return this.postModel.updateOne(
+      { _id: postId },
+      { $push: { likes: userId } },
+    );
+  }
+
+  unlike(postId: string, userId: string) {
+    return this.postModel.updateOne(
+      { _id: postId },
+      { $pull: { likes: userId } },
+    );
   }
 }

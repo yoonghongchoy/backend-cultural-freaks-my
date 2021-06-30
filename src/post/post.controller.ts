@@ -49,4 +49,14 @@ export class PostController {
   remove(@Param('id') id: string) {
     return this.postService.remove(id);
   }
+
+  @Get('like/:postId')
+  likePost(@Param('postId') postId: string, @GetUser() user: User) {
+    return this.postService.like(postId, user._id);
+  }
+
+  @Delete('unlike/:postId')
+  unlikePost(@Param('postId') postId: string, @GetUser() user: User) {
+    return this.postService.unlike(postId, user._id);
+  }
 }
