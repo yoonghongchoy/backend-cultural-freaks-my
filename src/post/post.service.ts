@@ -62,6 +62,19 @@ export class PostService {
       filter['hashtags'] = `#${state.replace(/\s+/g, '')}`;
     }
 
+    if (keyword1) {
+      filter['hashtags'] = `#${keyword1.replace(/\s+/g, '')}`;
+    }
+
+    if (keyword2) {
+      filter['hashtags'] = `#${keyword2.replace(/\s+/g, '')}`;
+    }
+
+    if (keyword3) {
+      filter['hashtags'] = `#${keyword3.replace(/\s+/g, '')}`;
+    }
+    1;
+
     this.logger.debug(`Filter: ${JSON.stringify(filter)}`);
     this.logger.debug(`Sort: ${JSON.stringify(sort)}`);
 
