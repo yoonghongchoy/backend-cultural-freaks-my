@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   Logger,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
@@ -11,6 +12,8 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { MailService } from '../mail/mail.service';
 import * as crypto from 'crypto';
+import passport from 'passport';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -85,5 +88,27 @@ export class AuthService {
 
   findUser(id: string) {
     return this.userService.findOneById(id);
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.userService.findOne(email);
+
+    if (!user) {
+      throw new NotFoundException("Email doesn't exist");
+    }
+
+    const token = crypto.randomBytes(64).toString('hex');
+    await this.mailService.sendForgotPassword(user, token);
+    await this.userService.updateResetToken(user, token);
+  }
+
+  async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    const hashPassword = await bcrypt.hash(resetPasswordDto.password, 10);
+
+    await this.userService.resetPassword(
+      resetPasswordDto.token,
+      resetPasswordDto.email,
+      hashPassword,
+    );
   }
 }

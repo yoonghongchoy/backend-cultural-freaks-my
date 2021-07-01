@@ -15,6 +15,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { GetUser } from './get-user.decorator';
 import { User } from '../user/schemas/user.schema';
 import { AuthGuard } from '@nestjs/passport';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -36,6 +37,16 @@ export class AuthController {
   @HttpCode(200)
   activate(@Query('token') token: string) {
     return this.authService.activate(token);
+  }
+
+  @Get('/forgot/:email')
+  forgotPassword(@Param('email') email: string) {
+    return this.authService.forgotPassword(email);
+  }
+
+  @Post('/reset')
+  resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.authService.resetPassword(resetPasswordDto);
   }
 
   @UseGuards(AuthGuard())

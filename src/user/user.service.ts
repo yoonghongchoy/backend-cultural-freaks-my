@@ -57,4 +57,15 @@ export class UserService {
     }
     return existingUser;
   }
+
+  updateResetToken(user: User, token: string) {
+    return this.userModel.updateOne({ _id: user._id }, { token });
+  }
+
+  resetPassword(token: string, email: string, password: string) {
+    return this.userModel.updateOne(
+      { token, email },
+      { password, token: null },
+    );
+  }
 }
