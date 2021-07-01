@@ -16,6 +16,7 @@ import { GetUser } from './get-user.decorator';
 import { User } from '../user/schemas/user.schema';
 import { AuthGuard } from '@nestjs/passport';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { UpdateUserDto } from '../user/dto/update-user.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -59,5 +60,11 @@ export class AuthController {
   @Get('/user/:id')
   findOneById(@Param('id') id: string) {
     return this.authService.findUser(id);
+  }
+
+  @UseGuards(AuthGuard())
+  @Post('/user/editProfile')
+  editProfile(@Body() updateUserDto: UpdateUserDto, @GetUser() user: User) {
+    return this.authService.updateUser(updateUserDto, user);
   }
 }

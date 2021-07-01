@@ -4,6 +4,8 @@ import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { SearchQueryDto } from '../search/dto/search-query.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -67,5 +69,22 @@ export class UserService {
       { token, email },
       { password, token: null },
     );
+  }
+
+  async updateUser(updateUserDto: UpdateUserDto, user: User) {
+    if (updateUserDto.password) {
+      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
+    } else {
+      updateUserDto.password = user.password;
+    }
+    const updatedUser = await this.userModel
+      .findOneAndUpdate(
+        { _id: user._id },
+        { $set: updateUserDto },
+        { new: true },
+      )
+      .exec();
+
+    return updatedUser;
   }
 }

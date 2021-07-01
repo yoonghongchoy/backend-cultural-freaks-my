@@ -14,6 +14,8 @@ import { MailService } from '../mail/mail.service';
 import * as crypto from 'crypto';
 import passport from 'passport';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { UpdateUserDto } from '../user/dto/update-user.dto';
+import { User } from '../user/schemas/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -48,7 +50,7 @@ export class AuthService {
     const user = await this.userService.findOne(loginDto.email);
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Wrong email');
     }
 
     if (!user.isActivated) {
@@ -58,7 +60,7 @@ export class AuthService {
     const compare = await bcrypt.compare(loginDto.password, user.password);
 
     if (!compare) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Wrong password');
     }
 
     const payload = { email: user.email };
@@ -110,5 +112,9 @@ export class AuthService {
       resetPasswordDto.email,
       hashPassword,
     );
+  }
+
+  updateUser(updateUserDto: UpdateUserDto, user: User) {
+    return this.userService.updateUser(updateUserDto, user);
   }
 }
