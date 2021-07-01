@@ -14,7 +14,7 @@ export class Post extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
   user: string;
 
-  @Prop({ required: true })
+  @Prop()
   content: string;
 
   @Prop([String])
@@ -28,6 +28,9 @@ export class Post extends Document {
     default: [],
   })
   likes: string[];
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Post.name })
+  originalPost: string;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

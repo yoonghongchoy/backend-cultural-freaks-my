@@ -20,6 +20,7 @@ export class NotificationService {
     notification.notifier = createNotificationDto.notifier;
     notification.sender = user._id;
     notification.content = createNotificationDto.content;
+    notification.post = createNotificationDto.post;
 
     return notification.save();
   }

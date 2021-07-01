@@ -59,4 +59,9 @@ export class PostController {
   unlikePost(@Param('postId') postId: string, @GetUser() user: User) {
     return this.postService.unlike(postId, user._id);
   }
+
+  @Get('share/:postId')
+  sharePost(@Param('postId') postId: string, @GetUser() user: User) {
+    return this.postService.share(postId, user._id);
+  }
 }

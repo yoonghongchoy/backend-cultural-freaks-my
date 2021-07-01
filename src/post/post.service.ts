@@ -80,7 +80,11 @@ export class PostService {
 
     return this.postModel
       .find(filter)
-      .populate('user', 'firstName surname profilePicture')
+      .populate({ path: 'user', select: 'firstName surname profilePicture' })
+      .populate({
+        path: 'originalPost',
+        populate: { path: 'user', select: 'firstName surname profilePicture' },
+      })
       .skip(offset)
       .limit(limit)
       .sort(sort)
@@ -153,5 +157,19 @@ export class PostService {
       { _id: postId },
       { $pull: { likes: userId } },
     );
+  }
+
+  async share(postId: string, userId: string) {
+    const post = await this.postModel.findOne({ _id: postId });
+
+    if (!post) {
+      throw new InternalServerErrorException();
+    }
+
+    const newPost = new this.postModel();
+    newPost.user = userId;
+    newPost.originalPost = postId;
+
+    return newPost.save();
   }
 }

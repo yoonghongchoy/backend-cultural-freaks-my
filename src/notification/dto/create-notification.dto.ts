@@ -6,4 +6,7 @@ export class CreateNotificationDto {
 
   @IsString()
   content: string;
+
+  @IsString()
+  post: string;
 }
