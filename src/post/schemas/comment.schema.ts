@@ -20,6 +20,9 @@ export class Comments extends Document {
     default: [],
   })
   subComments: string[];
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Post.name })
+  post: string;
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comments);

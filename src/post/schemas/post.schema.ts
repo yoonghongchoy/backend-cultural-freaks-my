@@ -32,12 +32,6 @@ export class Post extends Document {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Post.name })
   originalPost: string;
-
-  @Prop({
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: Comments.name }],
-    default: [],
-  })
-  comments: string[];
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

@@ -95,13 +95,6 @@ export class PostService {
         path: 'originalPost',
         populate: { path: 'user', select: 'firstName surname profilePicture' },
       })
-      .populate({
-        path: 'comments',
-        populate: {
-          path: 'subComments user',
-          select: 'firstName surname profilePicture',
-        },
-      })
       .skip(offset)
       .limit(limit)
       .sort(sort)
@@ -195,20 +188,27 @@ export class PostService {
     comment.comment = addCommentDto.comment;
     comment.level = addCommentDto.level;
     comment.user = user._id;
-    const newComment = await comment.save();
+    comment.post = addCommentDto.post;
+    const newComment = await (await comment.save())
+      .populate('subComments')
+      .populate('user', 'firstName surname profilePicture')
+      .execPopulate();
 
     if (addCommentDto.level === 2 && addCommentDto.parentComment) {
       await this.commentModel.updateOne(
         { _id: addCommentDto.parentComment },
         { $push: { subComments: newComment._id } },
       );
-    } else if (addCommentDto.level === 1) {
-      await this.postModel.updateOne(
-        { _id: addCommentDto.post },
-        { $push: { comments: newComment._id } },
-      );
     }
 
     return newComment;
+  }
+
+  getComment(postId: string) {
+    return this.commentModel
+      .find({ post: postId, level: 1 })
+      .populate('subComments')
+      .populate('user', 'firstName surname profilePicture')
+      .exec();
   }
 }

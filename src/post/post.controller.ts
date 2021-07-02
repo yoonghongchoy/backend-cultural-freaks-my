@@ -70,4 +70,9 @@ export class PostController {
   addComment(@Body() addCommentDto: AddCommentDto, @GetUser() user: User) {
     return this.postService.addComment(addCommentDto, user);
   }
+
+  @Get('/comment/:postId')
+  getComment(@Param('postId') postId: string) {
+    return this.postService.getComment(postId);
+  }
 }
