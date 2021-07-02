@@ -17,6 +17,7 @@ import { GetPostDto } from './dto/get-post.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../user/schemas/user.schema';
+import { AddCommentDto } from './dto/add-comment.dto';
 
 @ApiTags('post')
 @ApiBearerAuth()
@@ -63,5 +64,10 @@ export class PostController {
   @Get('share/:postId')
   sharePost(@Param('postId') postId: string, @GetUser() user: User) {
     return this.postService.share(postId, user._id);
+  }
+
+  @Post('comment')
+  addComment(@Body() addCommentDto: AddCommentDto, @GetUser() user: User) {
+    return this.postService.addComment(addCommentDto, user);
   }
 }

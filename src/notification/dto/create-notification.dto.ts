@@ -1,4 +1,5 @@
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateNotificationDto {
   @IsString()
@@ -9,4 +10,9 @@ export class CreateNotificationDto {
 
   @IsString()
   post: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  comment: string;
 }

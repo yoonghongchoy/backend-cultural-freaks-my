@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { User } from '../../user/schemas/user.schema';
 import * as mongoose from 'mongoose';
+import { Comments } from './comment.schema';
 
 export interface Media {
   name: string;
@@ -31,6 +32,12 @@ export class Post extends Document {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Post.name })
   originalPost: string;
+
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: Comments.name }],
+    default: [],
+  })
+  comments: string[];
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

@@ -12,7 +12,8 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { GetPostDto } from './dto/get-post.dto';
 import { User } from '../user/schemas/user.schema';
 import { SearchQueryDto } from '../search/dto/search-query.dto';
-import * as mongoose from 'mongoose';
+import { AddCommentDto } from './dto/add-comment.dto';
+import { Comments } from './schemas/comment.schema';
 
 @Injectable()
 export class PostService {
@@ -20,13 +21,23 @@ export class PostService {
 
   constructor(
     @InjectModel(Post.name) private readonly postModel: Model<Post>,
+    @InjectModel(Comments.name)
+    private readonly commentModel: Model<Comments>,
   ) {}
 
   search(searchQueryDto: SearchQueryDto) {
     const { limit, offset, search } = searchQueryDto;
 
     return this.postModel
-      .find({ content: { $regex: search, $options: 'i' } }, '_id content')
+      .find(
+        {
+          $or: [
+            { content: { $regex: search, $options: 'i' } },
+            { hashtags: { $regex: search, $options: 'i' } },
+          ],
+        },
+        '_id content',
+      )
       .skip(offset)
       .limit(limit)
       .sort({ createdAt: -1 })
@@ -73,7 +84,6 @@ export class PostService {
     if (keyword3) {
       filter['hashtags'] = `#${keyword3.replace(/\s+/g, '')}`;
     }
-    1;
 
     this.logger.debug(`Filter: ${JSON.stringify(filter)}`);
     this.logger.debug(`Sort: ${JSON.stringify(sort)}`);
@@ -84,6 +94,13 @@ export class PostService {
       .populate({
         path: 'originalPost',
         populate: { path: 'user', select: 'firstName surname profilePicture' },
+      })
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'subComments user',
+          select: 'firstName surname profilePicture',
+        },
       })
       .skip(offset)
       .limit(limit)
@@ -168,8 +185,30 @@ export class PostService {
 
     const newPost = new this.postModel();
     newPost.user = userId;
-    newPost.originalPost = postId;
+    newPost.originalPost = post.originalPost ? post.originalPost : post._id;
 
     return newPost.save();
+  }
+
+  async addComment(addCommentDto: AddCommentDto, user: User) {
+    const comment = new this.commentModel();
+    comment.comment = addCommentDto.comment;
+    comment.level = addCommentDto.level;
+    comment.user = user._id;
+    const newComment = await comment.save();
+
+    if (addCommentDto.level === 2 && addCommentDto.parentComment) {
+      await this.commentModel.updateOne(
+        { _id: addCommentDto.parentComment },
+        { $push: { subComments: newComment._id } },
+      );
+    } else if (addCommentDto.level === 1) {
+      await this.postModel.updateOne(
+        { _id: addCommentDto.post },
+        { $push: { comments: newComment._id } },
+      );
+    }
+
+    return newComment;
   }
 }

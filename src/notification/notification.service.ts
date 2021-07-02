@@ -21,6 +21,9 @@ export class NotificationService {
     notification.sender = user._id;
     notification.content = createNotificationDto.content;
     notification.post = createNotificationDto.post;
+    if (createNotificationDto.comment) {
+      notification.comment = createNotificationDto.comment;
+    }
 
     return notification.save();
   }
