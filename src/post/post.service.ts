@@ -104,7 +104,11 @@ export class PostService {
   async findOne(id: string) {
     const post = await this.postModel
       .findOne({ _id: id })
-      .populate('user', 'firstName surname profilePicture')
+      .populate({ path: 'user', select: 'firstName surname profilePicture' })
+      .populate({
+        path: 'originalPost',
+        populate: { path: 'user', select: 'firstName surname profilePicture' },
+      })
       .exec();
     if (!post) {
       throw new NotFoundException(`Post #${id} not found`);

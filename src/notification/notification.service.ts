@@ -36,6 +36,7 @@ export class NotificationService {
       .populate('sender', 'profilePicture firstName surname')
       .limit(limit)
       .skip(offset)
+      .sort({ createdAt: -1 })
       .exec();
   }
 }
