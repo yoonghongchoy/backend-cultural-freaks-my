@@ -216,4 +216,16 @@ export class PostService {
       .populate('user', 'firstName surname profilePicture')
       .exec();
   }
+
+  async deleteComment(id: string) {
+    const comment = await this.commentModel.findOne({ _id: id }).exec();
+    await this.commentModel
+      .findOneAndUpdate({ subComments: id }, { $pull: { subComments: id } })
+      .exec();
+
+    if (comment.subComments) {
+      this.commentModel.deleteMany({ _id: { $in: comment.subComments } });
+    }
+    return comment.remove();
+  }
 }

@@ -75,4 +75,9 @@ export class PostController {
   getComment(@Param('postId') postId: string) {
     return this.postService.getComment(postId);
   }
+
+  @Delete('/comment/:postId')
+  deleteComment(@Param('postId') postId: string) {
+    return this.postService.deleteComment(postId);
+  }
 }
