@@ -207,7 +207,12 @@ export class PostService {
   getComment(postId: string) {
     return this.commentModel
       .find({ post: postId, level: 1 })
-      .populate('subComments')
+      .populate({
+        path: 'subComments',
+        populate: {
+          path: 'user',
+        },
+      })
       .populate('user', 'firstName surname profilePicture')
       .exec();
   }
