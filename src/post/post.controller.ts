@@ -7,9 +7,11 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -18,6 +20,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../user/schemas/user.schema';
 import { AddCommentDto } from './dto/add-comment.dto';
+import { ApiImplicitFile } from '@nestjs/swagger/dist/decorators/api-implicit-file.decorator';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('post')
 @ApiBearerAuth()
@@ -25,6 +29,17 @@ import { AddCommentDto } from './dto/add-comment.dto';
 @Controller('post')
 export class PostController {
   constructor(private postService: PostService) {}
+
+  @Post()
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FilesInterceptor('files'))
+  create(
+    @Body() createPostDto: CreatePostDto,
+    @UploadedFiles() files: any,
+    @GetUser() user: User,
+  ) {
+    return this.postService.create(createPostDto, user, files);
+  }
 
   @Get()
   findAll(@Query() getPostDto: GetPostDto, @GetUser() user: User) {
@@ -34,11 +49,6 @@ export class PostController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.postService.findOne(id);
-  }
-
-  @Post()
-  create(@Body() createPostDto: CreatePostDto, @GetUser() user: User) {
-    return this.postService.create(createPostDto, user);
   }
 
   @Patch(':id')

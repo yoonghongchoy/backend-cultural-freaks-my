@@ -9,6 +9,7 @@ import { PostModule } from './post/post.module';
 import { FriendModule } from './friend/friend.module';
 import { SearchModule } from './search/search.module';
 import { NotificationModule } from './notification/notification.module';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { NotificationModule } from './notification/notification.module';
     FriendModule,
     SearchModule,
     NotificationModule,
+    FileModule,
   ],
   controllers: [],
   providers: [],

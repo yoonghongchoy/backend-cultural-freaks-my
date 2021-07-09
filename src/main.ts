@@ -19,8 +19,8 @@ async function bootstrap() {
       },
     }),
   );
-  app.use(bodyParser.json({ limit: '50mb' }));
-  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+  app.use(bodyParser.json({ limit: '1gb' }));
+  app.use(bodyParser.urlencoded({ limit: '1gb', extended: true }));
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Cultural Freaks MY')

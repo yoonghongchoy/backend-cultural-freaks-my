@@ -1,12 +1,13 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Post } from './schemas/post.schema';
-import { Model, Schema } from 'mongoose';
+import { Media, Post } from './schemas/post.schema';
+import { Model } from 'mongoose';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { GetPostDto } from './dto/get-post.dto';
@@ -14,6 +15,7 @@ import { User } from '../user/schemas/user.schema';
 import { SearchQueryDto } from '../search/dto/search-query.dto';
 import { AddCommentDto } from './dto/add-comment.dto';
 import { Comments } from './schemas/comment.schema';
+import { FileService } from '../file/file.service';
 
 @Injectable()
 export class PostService {
@@ -23,6 +25,7 @@ export class PostService {
     @InjectModel(Post.name) private readonly postModel: Model<Post>,
     @InjectModel(Comments.name)
     private readonly commentModel: Model<Comments>,
+    private fileService: FileService,
   ) {}
 
   search(searchQueryDto: SearchQueryDto) {
@@ -44,7 +47,7 @@ export class PostService {
       .exec();
   }
 
-  findAll(getPostDto: GetPostDto, myId: string) {
+  async findAll(getPostDto: GetPostDto, myId: string) {
     const {
       limit,
       offset,
@@ -88,7 +91,7 @@ export class PostService {
     this.logger.debug(`Filter: ${JSON.stringify(filter)}`);
     this.logger.debug(`Sort: ${JSON.stringify(sort)}`);
 
-    return this.postModel
+    const posts = await this.postModel
       .find(filter)
       .populate({ path: 'user', select: 'firstName surname profilePicture' })
       .populate({
@@ -98,10 +101,28 @@ export class PostService {
       .skip(offset)
       .limit(limit)
       .sort(sort)
+      .lean()
       .exec();
+    const newPosts = [];
+    for (const post of posts) {
+      const newPost = post;
+      const newMedias = [];
+      for (const media of post.medias) {
+        const base64 = await this.fileService.getBase64(media.value);
+        newMedias.push({
+          name: media.name,
+          type: media.type,
+          value: base64,
+        });
+      }
+      newPost.medias = newMedias;
+      newPosts.push(newPost);
+    }
+
+    return newPosts;
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, base64 = true) {
     const post = await this.postModel
       .findOne({ _id: id })
       .populate({ path: 'user', select: 'firstName surname profilePicture' })
@@ -113,25 +134,51 @@ export class PostService {
     if (!post) {
       throw new NotFoundException(`Post #${id} not found`);
     }
+
+    if (base64) {
+      const newMedias = [];
+      for (const media of post.medias) {
+        const base64 = await this.fileService.getBase64(media.value);
+        newMedias.push({
+          name: media.name,
+          type: media.type,
+          value: base64,
+        });
+      }
+      post.medias = newMedias;
+    }
+
     return post;
   }
 
-  async create(createPostDto: CreatePostDto, user: User) {
-    const { content, hashtags, medias } = createPostDto;
+  async create(createPostDto: CreatePostDto, user: User, files: any) {
+    const { content, hashtags } = createPostDto;
+    const mediaFiles = [];
+
+    if (!files) {
+      throw new BadRequestException('Please upload at least 1 image/video');
+    }
+
+    files.forEach((file) => {
+      const newMedia: Media = {
+        name: file.originalname,
+        value: file.id,
+        type: file.mimetype.includes('video') ? 'video' : 'image',
+      };
+      mediaFiles.push(newMedia);
+    });
 
     let post = new this.postModel();
     post.user = user._id;
     post.content = content;
     post.hashtags = hashtags;
-    post.medias = medias;
+    post.medias = mediaFiles;
 
     try {
       await post.save();
     } catch (err) {
       this.logger.error(
-        `Failed to create a post for user "${
-          user.email
-        }". Data: ${JSON.stringify(createPostDto)}`,
+        `Failed to create a post for user "${user.email}". Data: ${createPostDto.content}`,
         err.stack,
       );
       throw new InternalServerErrorException();
@@ -155,7 +202,14 @@ export class PostService {
   }
 
   async remove(id: string) {
-    const post = await this.findOne(id);
+    const post = await this.findOne(id, false);
+
+    if (post) {
+      for (const media of post.medias) {
+        await this.fileService.deleteFile(media.value);
+      }
+    }
+
     return post.remove();
   }
 
