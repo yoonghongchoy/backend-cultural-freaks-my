@@ -24,13 +24,13 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('/signup')
-  signUp(@Body() createUserDto: CreateUserDto): Promise<void> {
+  signUp(@Body() createUserDto: CreateUserDto) {
     return this.authService.signUp(createUserDto);
   }
 
   @Post('/login')
   @HttpCode(200)
-  login(@Body() loginDto: LoginDto): Promise<{ accessToken: string }> {
+  login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
 

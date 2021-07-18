@@ -968,7 +968,7 @@
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-1.3.2.tgz#93e25bf9ee75fe0fd80b594bc4feb0e862111b5a"
   integrity sha512-YATxVxgRqNH6nHEIsvg6k2Boc1JHI9ZbH5iWFFv/MTkchz3b1ieGDa5T0a9RznNdI0KhVbdbWSN+KWWrQZRxTw==
 
-"@types/mongodb@*", "@types/mongodb@^3.5.25":
+"@types/mongodb@^3.5.25":
   version "3.6.20"
   resolved "https://registry.yarnpkg.com/@types/mongodb/-/mongodb-3.6.20.tgz#b7c5c580644f6364002b649af1c06c3c0454e1d2"
   integrity sha512-WcdpPJCakFzcWWD9juKoZbRtQxKIMYF/JIAM4JrNHrMcnJL6/a2NWjXxW7fo9hxboxxkg+icff8d7+WIEvKgYQ==
@@ -984,25 +984,7 @@
     "@types/bson" "*"
     "@types/node" "*"
 
-"@types/mongoose@5.10.5":
-  version "5.10.5"
-  resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.10.5.tgz#0f4fb0440e8cf0213caec1e5c7b163dbd9847c56"
-  integrity sha512-37QMIA954T3n+HSksSNLlxZsqF8fMJu5S4dyPBod6gRxGtsXlQ9jUtL8BE8Seimv99u79eLXI3bggoCnSQ/fxQ==
-  dependencies:
-    "@types/mongodb" "*"
-    "@types/node" "*"
-
-"@types/multer-gridfs-storage@^4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@types/multer-gridfs-storage/-/multer-gridfs-storage-4.0.2.tgz#2f13f2b7024502af40811704a760f012d49d54f7"
-  integrity sha512-U07vM9/Z++k1Yn6KhLz/rDiG9ZRsgEGgB3Rwno1aghYgrIuNfbF4qUgCpvZrt7HV0Xvy23YmnKdwHMTncH0jFw==
-  dependencies:
-    "@types/express" "*"
-    "@types/mongodb" "*"
-    "@types/mongoose" "5.10.5"
-    "@types/multer" "*"
-
-"@types/multer@*", "@types/multer@^1.4.3":
+"@types/multer@^1.4.3":
   version "1.4.7"
   resolved "https://registry.yarnpkg.com/@types/multer/-/multer-1.4.7.tgz#89cf03547c28c7bbcc726f029e2a76a7232cc79e"
   integrity sha512-/SNsDidUFCvqqcWDwxv2feww/yqhNeTRL5CVoL3jU4Goc4kKEL10T7Eye65ZqPNi4HRx8sAEX59pV1aEH7drNA==

@@ -46,7 +46,7 @@ export class AuthService {
     await this.userService.create(newUser, token);
   }
 
-  async login(loginDto: LoginDto): Promise<{ accessToken: string }> {
+  async login(loginDto: LoginDto) {
     const user = await this.userService.findOne(loginDto.email);
 
     if (!user) {

@@ -25,11 +25,18 @@ export class FriendService {
     return newFriend.save();
   }
 
-  findAllByIdAndStatus(paginationQuery: GetFriendDto) {
-    const { limit, offset, userId, status } = paginationQuery;
+  findAllByIdAndStatus(getFriendDto: GetFriendDto) {
+    const { limit, offset, userId, status } = getFriendDto;
+    let filter = {};
+
+    if (status === 'pending') {
+      filter = { user2: userId, status: status };
+    } else {
+      filter = { $or: [{ user1: userId }, { user2: userId }], status: status };
+    }
 
     return this.friendModal
-      .find({ $or: [{ user1: userId }, { user2: userId }], status: status })
+      .find(filter)
       .populate('user1 user2', 'firstName surname profilePicture')
       .skip(offset)
       .limit(limit)

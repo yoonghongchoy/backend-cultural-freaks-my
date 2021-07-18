@@ -60,7 +60,8 @@ export class PostService {
     } = getPostDto;
     this.logger.debug(JSON.stringify(getPostDto));
     const filter = {};
-    const sort = { createdAt: -1 };
+    let sort: any = { createdAt: -1 };
+    const hashtags = [];
 
     if (userId) {
       filter['user'] = userId;
@@ -69,23 +70,27 @@ export class PostService {
     if (sortBy === 'isLiked') {
       filter['likes'] = myId;
     } else if (sortBy === 'popular') {
-      sort['likes'] = -1;
+      sort = { likes: -1 };
     }
 
     if (state) {
-      filter['hashtags'] = `#${state.replace(/\s+/g, '')}`;
+      hashtags.push(`#${state.replace(/\s+/g, '')}`);
     }
 
     if (keyword1) {
-      filter['hashtags'] = `#${keyword1.replace(/\s+/g, '')}`;
+      hashtags.push(`#${keyword1.replace(/\s+/g, '')}`);
     }
 
     if (keyword2) {
-      filter['hashtags'] = `#${keyword2.replace(/\s+/g, '')}`;
+      hashtags.push(`#${keyword2.replace(/\s+/g, '')}`);
     }
 
     if (keyword3) {
-      filter['hashtags'] = `#${keyword3.replace(/\s+/g, '')}`;
+      hashtags.push(`#${keyword3.replace(/\s+/g, '')}`);
+    }
+
+    if (hashtags.length > 0) {
+      filter['hashtags'] = { $all: hashtags };
     }
 
     this.logger.debug(`Filter: ${JSON.stringify(filter)}`);
